@@ -1,17 +1,17 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import smtplib
-from datetime import date
+from datetime import date, timedelta
 import sys
 sys.path.append('C:\\Users\\swjeo\\Desktop\\PythonAutomate\\venv\\Lib\\site-packages')
 
 
 
-today = str(date.today())
+today = str(date.today() - timedelta(days=1))
 date1 = today[5:] + '-'
 date2 = today[2:4]
 today = date1 + date2
-url = 'https://www.cnn.com/world/live-news/coronavirus-pandemic-vaccine-updates-' + today + '/index.html'
+url = 'https://edition.cnn.com/world/live-news/coronavirus-pandemic-vaccine-updates-' + today + '/index.html'
 print(url);
 
 
@@ -39,25 +39,28 @@ with urlopen(url) as response:
 
 gmail_user = "swjeong0825@gmail.com"
 
-# gmail_pw = "myPassword"
+# gmail_pw = "my password"
 
 sent_from = "swjeong0825@gmail.com"
-to = "jeong723@gmail.com"
-# to = "swjeong0825@gmail.com"
+email_to_list = ["jeong723@gmail.com", "swjeong0825@gmail.com"]
 subject = "CNN Covid Update"
 
-email_text = """\
-From: %s
-To: %s
-Subject: %s
 
-%s
-""" % (sent_from, ", ".join(to), subject, body_str)
 
 server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
 server.ehlo()
 server.login(gmail_user, gmail_pw)
-server.sendmail(sent_from, to, email_text.encode("utf8"))
+
+for to in email_to_list:
+    email_text = """\
+    From: %s
+    To: %s
+    Subject: %s
+    
+    %s
+    """ % (sent_from, ", ".join(to), subject, body_str)
+    server.sendmail(sent_from, to, email_text.encode("utf8"))
+
 server.close()
 print ("email sent")
 
